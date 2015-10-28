@@ -82,7 +82,7 @@ public class StudentRosterApplication {
         welcomeBanner ();
         mainLoop:
         while (true) {
-            System.out.println ("Press 1 to enter student data.");
+            System.out.println ("Press 1 to edit student data.");
             System.out.println ("Press 2 to display roster.");
             System.out.println ("Press 3 to exit application.");
             System.out.print ("Choice: ");
