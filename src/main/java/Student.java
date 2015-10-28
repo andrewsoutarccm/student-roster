@@ -2,33 +2,30 @@ import java.util.Scanner;
 
 public class Student {
     private int studentNumber;
+    public int getStudentNumber () {
+        return (studentNumber);
+    };
 
     private String name;
     public String getName () {
         return (name);
     }
 
-    public Student (Scanner kbdScanner, int studentNumber,
-                    Student prototype) {
+    public Student (int studentNumber, String name) {
         this.studentNumber = studentNumber;
-        while (true) {
-            System.out.format ("Enter the name of student %02d: %s",
-                               studentNumber,
-                               ((prototype != null) ?
-                                String.format ("[%s] ", prototype.getName ()) :
-                                ""));
-            String input = kbdScanner.nextLine ().trim ();
-            if (input.isEmpty ()) {
-                if (prototype != null) {
-                    name = prototype.getName ();
-                    break;
-                } else {
-                    System.out.println ("Cannot use an empty name, try again.");
-                }
-            } else {
-                name = input;
-                break;
-            }
+        this.name = name;
+    }
+
+    public Student (Scanner kbdScanner, Student prototype) {
+        this.studentNumber = prototype.getStudentNumber ();
+
+        System.out.format ("Enter the name of student %02d: [%s] ",
+                                studentNumber,
+                                prototype.getName ());
+        name = kbdScanner.nextLine ().trim ();
+
+        if (name.isEmpty ()) {
+            name = prototype.getName ();
         }
     }
 

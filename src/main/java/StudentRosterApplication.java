@@ -1,5 +1,16 @@
+
+import java.io.File;
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import com.andrewsoutar.cmp128.Utilities;
 
@@ -7,8 +18,40 @@ public class StudentRosterApplication {
     private Scanner kbdScanner;
     private final Student [] roster = new Student [20];
 
+    private static final Node ROSTER_FIRST_STUDENT;
+    static {
+        try {
+            ROSTER_FIRST_STUDENT =
+                DocumentBuilderFactory.newInstance ().newDocumentBuilder ()
+                .parse (new File (StudentRosterApplication.class
+                                  .getClassLoader ()
+                                  .getResource ("roster.xml")
+                                  .getFile ()))
+                .getDocumentElement ().getFirstChild ();
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            throw new ExceptionInInitializerError (e);
+        }
+    }
+
     public StudentRosterApplication (Scanner kbdScanner) {
         this.kbdScanner = kbdScanner;
+
+        Node currentStudent = ROSTER_FIRST_STUDENT;
+        try {
+            for (int i = 0; i < roster.length;
+                 i++, currentStudent = currentStudent.getNextSibling ()) {
+
+                while (currentStudent.getNodeType () == Node.TEXT_NODE) {
+                    currentStudent = currentStudent.getNextSibling ();
+                }
+
+                roster [i] =
+                    new Student (i + 1, currentStudent.getTextContent ());
+            }
+        } catch (NullPointerException e) {
+            System.out.println ("Not enough students in roster.xml");
+            throw (e);
+        }
     }
 
     private void welcomeBanner () {
@@ -20,7 +63,7 @@ public class StudentRosterApplication {
 
     private void enterStudentData () {
         for (int i = 0; i < roster.length; i++) {
-            roster [i] = new Student (kbdScanner, i + 1, roster [i]);
+            roster [i] = new Student (kbdScanner, roster [i]);
         }
     }
 
@@ -44,12 +87,15 @@ public class StudentRosterApplication {
             System.out.println ("Press 3 to exit application.");
             System.out.print ("Choice: ");
 
+            Scanner intScanner = new Scanner (kbdScanner.nextLine ());
             int choice;
             try {
-                choice = new Scanner (kbdScanner.nextLine ()).nextInt ();
+                choice = intScanner.nextInt ();
+                intScanner.close ();
             } catch (InputMismatchException e) {
                 System.out.println ("Please enter a number.");
                 System.out.println ();
+                intScanner.close ();
                 continue;
             }
 
