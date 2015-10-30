@@ -16,19 +16,6 @@ public class Student {
         this.name = name;
     }
 
-    public Student (Scanner kbdScanner, Student prototype) {
-        this.studentNumber = prototype.getStudentNumber ();
-
-        System.out.format ("Enter the name of student %02d: [%s] ",
-                                studentNumber,
-                                prototype.getName ());
-        name = kbdScanner.nextLine ().trim ();
-
-        if (name.isEmpty ()) {
-            name = prototype.getName ();
-        }
-    }
-
     public void update (Scanner kbdScanner) {
         System.out.format ("Enter the name of student %02d: [%s] ",
                            studentNumber, name);
