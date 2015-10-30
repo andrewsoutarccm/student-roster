@@ -29,6 +29,16 @@ public class Student {
         }
     }
 
+    public void update (Scanner kbdScanner) {
+        System.out.format ("Enter the name of student %02d: [%s] ",
+                           studentNumber, name);
+        String newName = kbdScanner.nextLine ().trim ();
+
+        if (!(newName.isEmpty ())) {
+            name = newName;
+        }
+    }
+
     public String formatEntry () {
         return (String.format ("Student %02d: %s", studentNumber, name));
     }
