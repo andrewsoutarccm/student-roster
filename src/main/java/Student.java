@@ -30,6 +30,6 @@ public class Student {
     }
 
     public String formatEntry () {
-        return (String.format ("Student %02d: %s", studentNumber, getName ()));
+        return (String.format ("Student %02d: %s", studentNumber, name));
     }
 }
