@@ -60,8 +60,8 @@ public class StudentRosterApplication {
     }
 
     private void enterStudentData () {
-        for (int i = 0; i < roster.length; i++) {
-            roster [i] = new Student (kbdScanner, roster [i]);
+        for (Student student : roster) {
+            student.update (kbdScanner);
         }
     }
 
