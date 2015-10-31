@@ -2,7 +2,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.InputMismatchException;
-import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,9 +10,10 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.andrewsoutar.cmp128.Utilities;
+import com.andrewsoutar.cmp128.Utilities.GenericScanner;
 
 public class StudentRosterApplication {
-    private Scanner kbdScanner;
+    private GenericScanner kbdScanner;
     private final Student [] roster = new Student [20];
 
     private static final Node ROSTER_FIRST_STUDENT;
@@ -31,7 +31,7 @@ public class StudentRosterApplication {
         }
     }
 
-    public StudentRosterApplication (Scanner kbdScanner) {
+    public StudentRosterApplication (GenericScanner kbdScanner) {
         this.kbdScanner = kbdScanner;
 
         Node currentStudent = ROSTER_FIRST_STUDENT;
@@ -85,15 +85,12 @@ public class StudentRosterApplication {
             System.out.println ("Press 3 to exit application.");
             System.out.print ("Choice: ");
 
-            Scanner intScanner = new Scanner (kbdScanner.nextLine ());
-            int choice;
+            Integer choice;
             try {
-                choice = intScanner.nextInt ();
-                intScanner.close ();
+                choice = kbdScanner.<Integer> next (Integer.class);
             } catch (InputMismatchException e) {
                 System.out.println ("Please enter a number.");
                 System.out.println ();
-                intScanner.close ();
                 continue;
             }
 
@@ -113,7 +110,8 @@ public class StudentRosterApplication {
             exitLoop:
                 while (true) {
                     System.out.print ("Are you sure you want to exit? [y/N] ");
-                    switch (kbdScanner.nextLine ().toLowerCase ()) {
+                    switch (kbdScanner.<String> next (String.class)
+                            .toLowerCase ()) {
                     case "":
                     case "n":
                     case "no":
