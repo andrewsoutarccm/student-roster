@@ -1,7 +1,6 @@
 
 import java.io.File;
 import java.io.IOException;
-import java.util.InputMismatchException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -11,6 +10,8 @@ import org.xml.sax.SAXException;
 
 import com.andrewsoutar.cmp128.Utilities;
 import com.andrewsoutar.cmp128.Utilities.GenericScanner;
+import com.andrewsoutar.cmp128.Utilities.MenuAction;
+import com.andrewsoutar.cmp128.Utilities.VoidFunction;
 
 public class StudentRosterApplication {
     private GenericScanner kbdScanner;
@@ -59,74 +60,47 @@ public class StudentRosterApplication {
             });
     }
 
-    private void enterStudentData () {
-        for (Student student : roster) {
-            student.update (kbdScanner);
-        }
-    }
-
-    private void displayRoster () {
-        Utilities.clearScreen ();
-        welcomeBanner ();
-
-        String [] rosterStrings = new String [roster.length];
-        for (int i = 0; i < roster.length; i++) {
-            rosterStrings [i] = roster [i].formatEntry ();
-        }
-        Utilities.printBordered(rosterStrings, '@');
-    }
-
     public void run () {
-        welcomeBanner ();
-        mainLoop:
-        while (true) {
-            System.out.println ("Press 1 to edit student data.");
-            System.out.println ("Press 2 to display roster.");
-            System.out.println ("Press 3 to exit application.");
-            System.out.print ("Choice: ");
-
-            Integer choice;
-            try {
-                choice = kbdScanner.<Integer> next (Integer.class);
-            } catch (InputMismatchException e) {
-                System.out.println ("Please enter a number.");
-                System.out.println ();
-                continue;
-            }
-
-            switch (choice) {
-            case 1:
-                enterStudentData ();
-                break;
-            case 2:
-                try {
-                    displayRoster ();
-                } catch (NullPointerException e) {
-                    System.out.println ("You have not created the roster yet!");
-                    System.out.println ();
+        Utilities.mainLoop (kbdScanner, new VoidFunction () {
+                public void call () {
+                    welcomeBanner ();
                 }
-                break;
-            case 3:
-            exitLoop:
-                while (true) {
-                    System.out.print ("Are you sure you want to exit? [y/N] ");
-                    switch (kbdScanner.<String> next (String.class)
-                            .toLowerCase ()) {
-                    case "":
-                    case "n":
-                    case "no":
-                        break exitLoop;
-                    case "y":
-                    case "yes":
-                        break mainLoop;
+            }, new MenuAction [] {
+                new MenuAction () {
+                    public String getName () {
+                        return ("edit student data");
+                    }
+                    public Boolean call () {
+                        for (Student student : roster) {
+                            student.update (kbdScanner);
+                        }
+                        return (new Boolean (true));
+                    }
+                },
+                new MenuAction () {
+                    public String getName () {
+                        return ("display roster");
+                    }
+                    public Boolean call () {
+                        Utilities.clearScreen ();
+                        welcomeBanner ();
+
+                        String [] rosterStrings = new String [roster.length];
+                        for (int i = 0; i < roster.length; i++) {
+                            rosterStrings [i] = roster [i].formatEntry ();
+                        }
+                        Utilities.printBordered(rosterStrings, '@');
+                        return (new Boolean (true));
+                    }
+                },
+                new MenuAction () {
+                    public String getName () {
+                        return ("exit");
+                    }
+                    public Boolean call () {
+                        return (Utilities.exitLoop (kbdScanner));
                     }
                 }
-                System.out.println ();
-                break;
-            default:
-                System.out.println ("Please enter a number between 1 and 3.");
-                System.out.println ();
-            }
-        }
+            });
     }
 }
